@@ -192,3 +192,73 @@ describe('generateReply — Anthropic', () => {
     expect(body.messages).toHaveLength(1)
   })
 })
+
+describe('generateReply — OpenRouter', () => {
+  it('calls the completions endpoint with OpenRouter headers and parses response', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      okResponse({
+        choices: [{ message: { content: 'Hello from OpenRouter!' } }],
+        usage: { prompt_tokens: 15, completion_tokens: 8, total_tokens: 23 },
+      }),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    const res = await generateReply({
+      config: config({ provider: 'openrouter', apiKey: 'sk-or-test-key', model: 'openai/gpt-4o-mini' }),
+      systemPrompt: 'sys',
+      messages: [{ role: 'user', content: 'Hi' }],
+    })
+
+    expect(res).toEqual({
+      text: 'Hello from OpenRouter!',
+      handoff: false,
+      usage: { promptTokens: 15, completionTokens: 8, totalTokens: 23 },
+    })
+
+    const [url, opts] = fetchMock.mock.calls[0]
+    expect(url).toBe('https://openrouter.ai/api/v1/chat/completions')
+    expect(opts.headers['Authorization']).toBe('Bearer sk-or-test-key')
+    expect(opts.headers['HTTP-Referer']).toBeTruthy()
+    expect(opts.headers['X-Title']).toBe('WACRM')
+    const body = JSON.parse(opts.body)
+    expect(body.model).toBe('openai/gpt-4o-mini')
+    expect(body.max_tokens).toBeGreaterThan(0)
+  })
+
+  it('detects handoff sentinel in OpenRouter output', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        okResponse({
+          choices: [{ message: { content: 'Hold on [[HANDOFF]]' } }],
+        }),
+      ),
+    )
+
+    const res = await generateReply({
+      config: config({ provider: 'openrouter' }),
+      systemPrompt: 'sys',
+      messages: [{ role: 'user', content: 'Agent please' }],
+    })
+
+    expect(res.handoff).toBe(true)
+    expect(res.text).toBe('Hold on')
+  })
+
+  it('throws AiError when OpenRouter returns non-2xx', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        errResponse(401, { error: { message: 'Invalid API Key' } }),
+      ),
+    )
+
+    await expect(
+      generateReply({
+        config: config({ provider: 'openrouter' }),
+        systemPrompt: 'sys',
+        messages: [{ role: 'user', content: 'Hi' }],
+      }),
+    ).rejects.toBeInstanceOf(AiError)
+  })
+})
