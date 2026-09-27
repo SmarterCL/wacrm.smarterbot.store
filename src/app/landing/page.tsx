@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "SmarterBOT — CRM + WhatsApp + IA",
+  title: "SmarterCRM — CRM + WhatsApp + IA",
   description: "Automatiza ventas, atención y seguimiento con WhatsApp, CRM e Inteligencia Artificial.",
 };
 
@@ -19,7 +19,7 @@ export default function LandingPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm shadow-primary/20">
               <Bot className="h-5 w-5" />
             </div>
-            <span className="text-base font-bold tracking-tight">SmarterBOT</span>
+            <span className="text-base font-bold tracking-tight">SmarterCRM</span>
           </Link>
           <div className="flex items-center gap-1.5">
             <Link href="/login" className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
@@ -58,12 +58,12 @@ export default function LandingPage() {
       <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
         <div className="text-center mb-14">
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Un embudo comercial completo</h2>
-          <p className="mt-4 text-muted-foreground">SmarterBOT convierte conversaciones y formularios en reuniones comerciales, seguimiento y clientes activos.</p>
+          <p className="mt-4 text-muted-foreground">SmarterCRM convierte conversaciones y formularios en reuniones comerciales, seguimiento y clientes activos.</p>
         </div>
         <div className="grid gap-6 md:grid-cols-4 md:gap-8">
           {[
             { n: "1", title: "Formulario", desc: "El cliente deja nombre, empresa, WhatsApp, email y necesidad principal." },
-            { n: "2", title: "Lead", desc: "SmarterBOT registra el contacto, clasifica el interés y crea el lead." },
+            { n: "2", title: "Lead", desc: "SmarterCRM registra el contacto, clasifica el interés y crea el lead." },
             { n: "3", title: "Agenda", desc: "El sistema propone horarios y confirma la cita por WhatsApp." },
             { n: "4", title: "Venta", desc: "Después de la demo, seguimiento, propuesta, pago y cliente activo." },
           ].map((step) => (
@@ -166,7 +166,7 @@ export default function LandingPage() {
       <section id="contact" className="mx-auto max-w-xl px-6 py-16 md:py-24 border-t border-border">
         <div className="rounded-3xl border border-border bg-card p-8 shadow-xl shadow-black/5">
           <h2 className="text-2xl font-extrabold tracking-tight text-foreground">Solicita tu demo</h2>
-          <p className="mt-2 text-sm text-muted-foreground">Completa el formulario y SmarterBOT iniciará el flujo: lead, appointment, WhatsApp, email y confirmación.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Completa el formulario y SmarterCRM iniciará el flujo: lead, appointment, WhatsApp, email y confirmación.</p>
           <form className="mt-7 flex flex-col gap-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <input placeholder="Nombre" required className="h-11 rounded-lg border border-border bg-background px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20" />
@@ -196,7 +196,7 @@ export default function LandingPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm shadow-primary/20">
               <Bot className="h-4 w-4" />
             </div>
-            <span className="text-sm font-bold">SmarterBOT</span>
+            <span className="text-sm font-bold">SmarterCRM</span>
           </div>
           <p className="text-xs text-muted-foreground">CRM + WhatsApp + Agenda + IA · Implementación guiada</p>
           <Link href="/login" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">Ingresar al CRM</Link>
