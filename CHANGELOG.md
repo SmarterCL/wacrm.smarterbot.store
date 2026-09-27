@@ -217,8 +217,7 @@ always did.
     `messages:read`).
   - `POST /api/v1/broadcasts` + `GET /api/v1/broadcasts/{id}` — launch a
     template broadcast to a recipient list and poll its progress
-    (`broadcasts:send`).
-  All list endpoints share one cursor-pagination contract
+    (`broadcasts:send`). All list endpoints share one cursor-pagination contract
   (`{ data, meta: { next_cursor } }`). No migration required — the
   scopes already existed and the tables are unchanged. Outbound event
   webhooks (react to inbound messages) are the remaining roadmap item.

@@ -68,19 +68,61 @@ assistant change data or send messages, add the write guards:
 Read tools are always available. Write and broadcast tools appear only
 when their guard is set.
 
-| Tool                 | Group     | Scope needed         | What it does                                    |
-| -------------------- | --------- | -------------------- | ----------------------------------------------- |
-| `whoami`             | read      | _(any valid key)_    | Show the account + scopes the key carries       |
-| `list_contacts`      | read      | `contacts:read`      | List/search contacts (paginated)                |
-| `get_contact`        | read      | `contacts:read`      | Read one contact                                |
-| `list_conversations` | read      | `conversations:read` | List conversations, filter by status/contact    |
-| `get_conversation`   | read      | `conversations:read` | Read one conversation                           |
-| `list_messages`      | read      | `messages:read`      | List a conversation's messages                  |
-| `get_broadcast`      | read      | `broadcasts:send`    | Poll a broadcast's delivery status              |
-| `send_message`       | write     | `messages:send`      | Send a WhatsApp message (text/template/media)   |
-| `create_contact`     | write     | `contacts:write`     | Create (find-or-create) a contact               |
-| `update_contact`     | write     | `contacts:write`     | Update a contact / replace its tags             |
-| `send_broadcast`     | broadcast | `broadcasts:send`    | Launch a template broadcast (requires `confirm`)|
+| Tool                    | Group     | Scope needed            | What it does                                        |
+| ----------------------- | --------- | ----------------------- | --------------------------------------------------- |
+| `get_me` / `whoami`     | read      | _(any valid key)_       | Show the account + scopes the key carries           |
+| `list_contacts`         | read      | `contacts:read`         | List/search contacts (paginated)                    |
+| `get_contact`           | read      | `contacts:read`         | Read one contact                                    |
+| `list_conversations`    | read      | `conversations:read`    | List conversations, filter by status/contact        |
+| `get_conversation`      | read      | `conversations:read`    | Read one conversation                               |
+| `list_messages`         | read      | `messages:read`         | List a conversation's messages                      |
+| `list_broadcasts`       | read      | `broadcasts:read`       | List broadcast campaigns (paginated)                |
+| `get_broadcast`         | read      | `broadcasts:read`       | Poll a broadcast's delivery status                  |
+| `list_templates`        | read      | `templates:read`        | List Meta-approved message templates                |
+| `get_template`          | read      | `templates:read`        | Read one message template                           |
+| `list_deals`            | read      | `deals:read`            | List CRM deals (paginated)                          |
+| `get_deal`              | read      | `deals:read`            | Read one deal                                       |
+| `list_pipelines`        | read      | `pipelines:read`        | List pipelines with stages                          |
+| `get_pipeline`          | read      | `pipelines:read`        | Read one pipeline                                   |
+| `list_stages`           | read      | `pipelines:read`        | List stages in a pipeline                           |
+| `list_tags`             | read      | `tags:read`             | List all tags                                       |
+| `list_automations`      | read      | `automations:read`      | List automations (paginated)                        |
+| `get_automation`        | read      | `automations:read`      | Read one automation with its step tree              |
+| `list_flows`            | read      | `flows:read`            | List flows (paginated)                              |
+| `get_flow`              | read      | `flows:read`            | Read one flow with its node graph                   |
+| `list_flow_runs`        | read      | `flows:read`            | List recent runs for a flow                         |
+| `list_flow_templates`   | read      | `flows:read`            | List available flow template gallery                |
+| `send_message`          | write     | `messages:send`         | Send a WhatsApp message (text/template/media)       |
+| `send_template_message` | write     | `messages:send`         | Send a template message (convenience alias)         |
+| `create_contact`        | write     | `contacts:write`        | Create (find-or-create) a contact                   |
+| `update_contact`        | write     | `contacts:write`        | Update a contact / replace its tags                 |
+| `delete_contact`        | write     | `contacts:write`        | Delete a contact (requires `confirm`)               |
+| `update_conversation`   | write     | `conversations:write`   | Update conversation status or assignment            |
+| `create_deal`           | write     | `deals:write`           | Create a CRM deal                                   |
+| `update_deal`           | write     | `deals:write`           | Update a deal                                       |
+| `delete_deal`           | write     | `deals:write`           | Delete a deal (requires `confirm`)                  |
+| `create_pipeline`       | write     | `pipelines:write`       | Create a pipeline                                   |
+| `update_pipeline`       | write     | `pipelines:write`       | Rename a pipeline                                   |
+| `delete_pipeline`       | write     | `pipelines:write`       | Delete a pipeline (requires `confirm`)              |
+| `create_stage`          | write     | `pipelines:write`       | Add a stage to a pipeline                           |
+| `update_stage`          | write     | `pipelines:write`       | Update a stage                                      |
+| `delete_stage`          | write     | `pipelines:write`       | Delete a stage (requires `confirm`)                 |
+| `create_tag`            | write     | `tags:write`            | Create a tag                                        |
+| `update_tag`            | write     | `tags:write`            | Update a tag                                        |
+| `delete_tag`            | write     | `tags:write`            | Delete a tag (requires `confirm`)                   |
+| `create_automation`     | write     | `automations:write`     | Create an automation                                |
+| `update_automation`     | write     | `automations:write`     | Update an automation                                |
+| `delete_automation`     | write     | `automations:write`     | Delete an automation (requires `confirm`)           |
+| `activate_automation`   | write     | `automations:write`     | Activate an automation (API validates config)       |
+| `deactivate_automation` | write     | `automations:write`     | Deactivate an automation                            |
+| `trigger_automation`    | write     | `automations:execute`   | Manually trigger an automation for a contact        |
+| `duplicate_automation`  | write     | `automations:write`     | Duplicate an automation as a draft                  |
+| `create_flow`           | write     | `flows:write`           | Create a flow (or clone from template)              |
+| `update_flow`           | write     | `flows:write`           | Replace a flow's header and/or node graph           |
+| `delete_flow`           | write     | `flows:write`           | Delete a flow (requires `confirm`)                  |
+| `activate_flow`         | write     | `flows:write`           | Change flow status (active/draft/archived)          |
+| `deactivate_flow`       | write     | `flows:write`           | Set flow back to draft                              |
+| `send_broadcast`        | broadcast | `broadcasts:write`      | Launch a template broadcast (requires `confirm`)    |
 
 ## Safety model
 

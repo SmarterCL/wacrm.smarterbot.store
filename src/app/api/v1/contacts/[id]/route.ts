@@ -100,3 +100,40 @@ export async function PATCH(
     return toApiErrorResponse(err);
   }
 }
+
+// ============================================================
+// DELETE /api/v1/contacts/{id} — delete a contact (scope: contacts:write)
+//
+// Account-scoped: a contact belonging to another account returns 404.
+// Cascades to contact_tags, contact_notes, contact_custom_values.
+// Conversations and deals referencing this contact have contact_id
+// SET NULL (ON DELETE SET NULL in the DB).
+// ============================================================
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const ctx = await requireApiKey(request, 'contacts:write');
+    const { id } = await params;
+
+    // Verify ownership before deleting — foreign id → 404.
+    const existing = await getContactById(ctx.supabase, ctx.accountId, id);
+    if (!existing) return fail('not_found', 'Contact not found', 404);
+
+    const { error } = await ctx.supabase
+      .from('contacts')
+      .delete()
+      .eq('id', id)
+      .eq('account_id', ctx.accountId);
+
+    if (error) {
+      console.error('[api/v1/contacts] delete error:', error);
+      return fail('internal', 'Failed to delete contact', 500);
+    }
+
+    return new Response(null, { status: 204 });
+  } catch (err) {
+    return toApiErrorResponse(err);
+  }
+}

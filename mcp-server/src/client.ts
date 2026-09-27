@@ -36,7 +36,7 @@ export class WacrmClient {
     this.apiKey = config.apiKey;
   }
 
-  private async request<T>(
+  async request<T>(
     method: string,
     path: string,
     options: { query?: Record<string, string | number | undefined>; body?: unknown } = {},
@@ -73,14 +73,12 @@ export class WacrmClient {
       );
     }
 
-    // 429s carry a Retry-After we surface to the model.
     let payload: unknown = undefined;
     const text = await res.text();
     if (text) {
       try {
         payload = JSON.parse(text);
       } catch {
-        // Non-JSON body (e.g. an upstream proxy error page).
         if (!res.ok) {
           throw new WacrmApiError(res.status, 'internal', text.slice(0, 500));
         }
@@ -122,6 +120,10 @@ export class WacrmClient {
     return this.request('POST', '/messages', { body });
   }
 
+  sendTemplateMessage(body: unknown): Promise<{ data: unknown }> {
+    return this.request('POST', '/messages/template', { body });
+  }
+
   // --- Contacts -----------------------------------------------------
 
   listContacts(query: {
@@ -145,6 +147,10 @@ export class WacrmClient {
     return this.request('PATCH', `/contacts/${encodeURIComponent(id)}`, { body });
   }
 
+  deleteContact(id: string): Promise<{ data: null }> {
+    return this.request('DELETE', `/contacts/${encodeURIComponent(id)}`).then(() => ({ data: null }));
+  }
+
   // --- Conversations ------------------------------------------------
 
   listConversations(query: {
@@ -160,6 +166,10 @@ export class WacrmClient {
     return this.request('GET', `/conversations/${encodeURIComponent(id)}`);
   }
 
+  updateConversation(id: string, body: unknown): Promise<{ data: unknown }> {
+    return this.request('PATCH', `/conversations/${encodeURIComponent(id)}`, { body });
+  }
+
   listConversationMessages(
     id: string,
     query: { limit?: number; cursor?: string },
@@ -169,11 +179,199 @@ export class WacrmClient {
 
   // --- Broadcasts ---------------------------------------------------
 
+  listBroadcasts(query: { limit?: number; cursor?: string }): Promise<Paginated<unknown>> {
+    return this.list('/broadcasts', query);
+  }
+
   sendBroadcast(body: unknown): Promise<{ data: unknown }> {
     return this.request('POST', '/broadcasts', { body });
   }
 
   getBroadcast(id: string): Promise<{ data: unknown }> {
     return this.request('GET', `/broadcasts/${encodeURIComponent(id)}`);
+  }
+
+  // --- Templates ----------------------------------------------------
+
+  listTemplates(query: {
+    limit?: number;
+    cursor?: string;
+    status?: string;
+    category?: string;
+  }): Promise<Paginated<unknown>> {
+    return this.list('/templates', query);
+  }
+
+  getTemplate(id: string): Promise<{ data: unknown }> {
+    return this.request('GET', `/templates/${encodeURIComponent(id)}`);
+  }
+
+  // --- Deals --------------------------------------------------------
+
+  listDeals(query: {
+    limit?: number;
+    cursor?: string;
+    pipeline_id?: string;
+    stage_id?: string;
+    status?: string;
+  }): Promise<Paginated<unknown>> {
+    return this.list('/deals', query);
+  }
+
+  getDeal(id: string): Promise<{ data: unknown }> {
+    return this.request('GET', `/deals/${encodeURIComponent(id)}`);
+  }
+
+  createDeal(body: unknown): Promise<{ data: unknown }> {
+    return this.request('POST', '/deals', { body });
+  }
+
+  updateDeal(id: string, body: unknown): Promise<{ data: unknown }> {
+    return this.request('PATCH', `/deals/${encodeURIComponent(id)}`, { body });
+  }
+
+  deleteDeal(id: string): Promise<{ data: null }> {
+    return this.request('DELETE', `/deals/${encodeURIComponent(id)}`).then(() => ({ data: null }));
+  }
+
+  // --- Pipelines ----------------------------------------------------
+
+  listPipelines(query: { limit?: number; cursor?: string }): Promise<Paginated<unknown>> {
+    return this.list('/pipelines', query);
+  }
+
+  getPipeline(id: string): Promise<{ data: unknown }> {
+    return this.request('GET', `/pipelines/${encodeURIComponent(id)}`);
+  }
+
+  createPipeline(body: unknown): Promise<{ data: unknown }> {
+    return this.request('POST', '/pipelines', { body });
+  }
+
+  updatePipeline(id: string, body: unknown): Promise<{ data: unknown }> {
+    return this.request('PATCH', `/pipelines/${encodeURIComponent(id)}`, { body });
+  }
+
+  deletePipeline(id: string): Promise<{ data: null }> {
+    return this.request('DELETE', `/pipelines/${encodeURIComponent(id)}`).then(() => ({ data: null }));
+  }
+
+  // --- Stages -------------------------------------------------------
+
+  listStages(pipelineId: string): Promise<Paginated<unknown>> {
+    return this.list(`/pipelines/${encodeURIComponent(pipelineId)}/stages`, {});
+  }
+
+  createStage(pipelineId: string, body: unknown): Promise<{ data: unknown }> {
+    return this.request('POST', `/pipelines/${encodeURIComponent(pipelineId)}/stages`, { body });
+  }
+
+  updateStage(pipelineId: string, stageId: string, body: unknown): Promise<{ data: unknown }> {
+    return this.request(
+      'PATCH',
+      `/pipelines/${encodeURIComponent(pipelineId)}/stages/${encodeURIComponent(stageId)}`,
+      { body },
+    );
+  }
+
+  deleteStage(pipelineId: string, stageId: string): Promise<{ data: null }> {
+    return this.request(
+      'DELETE',
+      `/pipelines/${encodeURIComponent(pipelineId)}/stages/${encodeURIComponent(stageId)}`,
+    ).then(() => ({ data: null }));
+  }
+
+  // --- Tags ---------------------------------------------------------
+
+  listTags(query: { limit?: number; cursor?: string }): Promise<Paginated<unknown>> {
+    return this.list('/tags', query);
+  }
+
+  createTag(body: unknown): Promise<{ data: unknown }> {
+    return this.request('POST', '/tags', { body });
+  }
+
+  updateTag(id: string, body: unknown): Promise<{ data: unknown }> {
+    return this.request('PATCH', `/tags/${encodeURIComponent(id)}`, { body });
+  }
+
+  deleteTag(id: string): Promise<{ data: null }> {
+    return this.request('DELETE', `/tags/${encodeURIComponent(id)}`).then(() => ({ data: null }));
+  }
+
+  // --- Automations --------------------------------------------------
+
+  listAutomations(query: { limit?: number; cursor?: string }): Promise<Paginated<unknown>> {
+    return this.list('/automations', query);
+  }
+
+  getAutomation(id: string): Promise<{ data: unknown }> {
+    return this.request('GET', `/automations/${encodeURIComponent(id)}`);
+  }
+
+  createAutomation(body: unknown): Promise<{ data: unknown }> {
+    return this.request('POST', '/automations', { body });
+  }
+
+  updateAutomation(id: string, body: unknown): Promise<{ data: unknown }> {
+    return this.request('PATCH', `/automations/${encodeURIComponent(id)}`, { body });
+  }
+
+  deleteAutomation(id: string): Promise<{ data: null }> {
+    return this.request('DELETE', `/automations/${encodeURIComponent(id)}`).then(() => ({ data: null }));
+  }
+
+  activateAutomation(id: string): Promise<{ data: unknown }> {
+    return this.request('POST', `/automations/${encodeURIComponent(id)}/activate`);
+  }
+
+  deactivateAutomation(id: string): Promise<{ data: unknown }> {
+    return this.request('POST', `/automations/${encodeURIComponent(id)}/deactivate`);
+  }
+
+  triggerAutomation(id: string, body: unknown): Promise<{ data: unknown }> {
+    return this.request('POST', `/automations/${encodeURIComponent(id)}/trigger`, { body });
+  }
+
+  duplicateAutomation(id: string): Promise<{ data: unknown }> {
+    return this.request('POST', `/automations/${encodeURIComponent(id)}/duplicate`);
+  }
+
+  // --- Flows --------------------------------------------------------
+
+  listFlows(query: { limit?: number; cursor?: string }): Promise<Paginated<unknown>> {
+    return this.list('/flows', query);
+  }
+
+  getFlow(id: string): Promise<{ data: unknown }> {
+    return this.request('GET', `/flows/${encodeURIComponent(id)}`);
+  }
+
+  createFlow(body: unknown): Promise<{ data: unknown }> {
+    return this.request('POST', '/flows', { body });
+  }
+
+  updateFlow(id: string, body: unknown): Promise<{ data: unknown }> {
+    return this.request('PUT', `/flows/${encodeURIComponent(id)}`, { body });
+  }
+
+  deleteFlow(id: string): Promise<{ data: null }> {
+    return this.request('DELETE', `/flows/${encodeURIComponent(id)}`).then(() => ({ data: null }));
+  }
+
+  activateFlow(id: string, body: unknown): Promise<{ data: unknown }> {
+    return this.request('POST', `/flows/${encodeURIComponent(id)}/activate`, { body });
+  }
+
+  deactivateFlow(id: string): Promise<{ data: unknown }> {
+    return this.request('POST', `/flows/${encodeURIComponent(id)}/deactivate`);
+  }
+
+  listFlowRuns(id: string): Promise<{ data: unknown }> {
+    return this.request('GET', `/flows/${encodeURIComponent(id)}/runs`);
+  }
+
+  listFlowTemplates(): Promise<{ data: unknown }> {
+    return this.request('GET', '/flows/templates');
   }
 }

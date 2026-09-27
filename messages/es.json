@@ -1768,8 +1768,21 @@
         "contacts:read": "Listar y leer contactos",
         "contacts:write": "Crear y actualizar contactos",
         "conversations:read": "Listar y leer conversaciones",
-        "broadcasts:send": "Lanzar campañas de difusión",
-        "webhooks:manage": "Registrar y gestionar webhooks de eventos salientes"
+        "broadcasts:read": "Listar y leer campañas de difusión",
+        "broadcasts:write": "Lanzar campañas de difusión",
+        "webhooks:manage": "Registrar y gestionar webhooks de eventos salientes",
+        "deals:read": "Listar y leer negocios",
+        "deals:write": "Crear, actualizar y eliminar negocios",
+        "pipelines:read": "Listar y leer embudos y etapas",
+        "pipelines:write": "Crear, actualizar y eliminar embudos y etapas",
+        "tags:read": "Listar etiquetas",
+        "tags:write": "Crear, actualizar y eliminar etiquetas",
+        "automations:read": "Listar y leer automatizaciones",
+        "automations:write": "Crear, actualizar, activar y eliminar automatizaciones",
+        "automations:execute": "Activar manualmente una automatización para un contacto",
+        "flows:read": "Listar y leer flujos",
+        "flows:write": "Crear, actualizar, activar y eliminar flujos",
+        "templates:read": "Listar y leer plantillas de mensajes"
       }
     },
     "deals": {

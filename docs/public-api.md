@@ -41,15 +41,29 @@ key's next request. Revoked keys stay in the list as an audit trail.
 A key can do only what its scopes allow — independent of who created
 it. Grant the minimum.
 
-| Scope                | Allows                                   |
-| -------------------- | ---------------------------------------- |
-| `messages:send`      | Send WhatsApp messages                   |
-| `messages:read`      | Read messages and delivery status        |
-| `contacts:read`      | List and read contacts                   |
-| `contacts:write`     | Create and update contacts               |
-| `conversations:read` | List and read conversations              |
-| `broadcasts:send`    | Launch broadcast campaigns               |
-| `webhooks:manage`    | Register and manage outbound webhooks    |
+| Scope                     | Allows                                        |
+| ------------------------- | --------------------------------------------- |
+| `messages:send`           | Send WhatsApp messages                        |
+| `messages:read`           | Read messages and delivery status             |
+| `contacts:read`           | List and read contacts                        |
+| `contacts:write`          | Create, update, and delete contacts           |
+| `conversations:read`      | List and read conversations                   |
+| `conversations:write`     | Update conversations (status, assignment)     |
+| `broadcasts:read`         | List and read broadcast campaigns             |
+| `broadcasts:write`        | Launch broadcast campaigns                    |
+| `webhooks:manage`         | Register and manage outbound webhooks         |
+| `deals:read`              | List and read deals                           |
+| `deals:write`             | Create, update, and delete deals              |
+| `pipelines:read`          | List and read pipelines and stages            |
+| `pipelines:write`         | Create, update, and delete pipelines/stages   |
+| `tags:read`               | List tags                                     |
+| `tags:write`              | Create, update, and delete tags               |
+| `automations:read`        | List and read automations                     |
+| `automations:write`       | Create, update, activate, and delete automations |
+| `automations:execute`     | Manually trigger an automation for a contact  |
+| `flows:read`              | List and read flows                           |
+| `flows:write`             | Create, update, activate, and delete flows    |
+| `templates:read`          | List and read message templates               |
 
 A key with **no scopes** still authenticates and can call
 `GET /api/v1/me` — useful for verifying a key works.
@@ -222,7 +236,7 @@ first (`404` otherwise).
 ### `POST /api/v1/broadcasts`
 
 Launch a template broadcast to a list of recipients. Scope:
-`broadcasts:send`. The broadcast + its recipient rows are persisted
+`broadcasts:write`. The broadcast + its recipient rows are persisted
 immediately and the sends fan out in the background, so the call
 returns fast — poll `GET /api/v1/broadcasts/{id}` for progress.
 
@@ -259,7 +273,7 @@ Invalid phone numbers are dropped and counted as `rejected`. Response
 
 ### `GET /api/v1/broadcasts/{id}`
 
-Broadcast status + counts. Scope: `broadcasts:send`. `status` moves
+Broadcast status + counts. Scope: `broadcasts:read`. `status` moves
 `sending` → `sent`; `delivered_count` / `read_count` keep climbing as
 Meta delivery webhooks arrive. `404` for another account's broadcast.
 

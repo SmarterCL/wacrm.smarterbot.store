@@ -45,7 +45,10 @@ export function lastNDayKeys(n: number): string[] {
  * getDay() uses 0 = Sunday which is awkward for most business charts.
  */
 export function mondayIndex(d: Date): number {
-  const jsDow = d.getDay() // 0..6 with Sunday=0
+  // Use getUTCDay so that ISO date strings ("2026-05-18") — which are
+  // parsed as midnight UTC — map to the correct calendar day regardless
+  // of the local timezone offset.
+  const jsDow = d.getUTCDay() // 0..6 with Sunday=0
   return (jsDow + 6) % 7
 }
 

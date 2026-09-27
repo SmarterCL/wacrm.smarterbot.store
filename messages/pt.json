@@ -1671,8 +1671,21 @@
         "contacts:read": "Listar e ler contatos",
         "contacts:write": "Criar e atualizar contatos",
         "conversations:read": "Listar e ler conversas",
-        "broadcasts:send": "Disparar campanhas de transmissão",
-        "webhooks:manage": "Registrar e gerenciar webhooks de eventos de saída"
+        "broadcasts:read": "Listar e ler campanhas de transmissão",
+        "broadcasts:write": "Disparar campanhas de transmissão",
+        "webhooks:manage": "Registrar e gerenciar webhooks de eventos de saída",
+        "deals:read": "Listar e ler negócios",
+        "deals:write": "Criar, atualizar e excluir negócios",
+        "pipelines:read": "Listar e ler funis e etapas",
+        "pipelines:write": "Criar, atualizar e excluir funis e etapas",
+        "tags:read": "Listar etiquetas",
+        "tags:write": "Criar, atualizar e excluir etiquetas",
+        "automations:read": "Listar e ler automações",
+        "automations:write": "Criar, atualizar, ativar e excluir automações",
+        "automations:execute": "Acionar manualmente uma automação para um contato",
+        "flows:read": "Listar e ler fluxos",
+        "flows:write": "Criar, atualizar, ativar e excluir fluxos",
+        "templates:read": "Listar e ler modelos de mensagens"
       }
     },
     "deals": {
