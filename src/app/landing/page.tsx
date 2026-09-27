@@ -112,7 +112,7 @@ export default function LandingPage() {
           <div className="rounded-3xl border-2 border-primary/30 bg-card p-8 shadow-xl shadow-primary/5">
             <div className="mb-2 text-xs font-bold uppercase text-primary">Plan Profesional</div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-5xl font-extrabold text-foreground">$19.500</span>
+              <span className="text-5xl font-extrabold text-foreground">$49.500</span>
               <span className="text-lg text-muted-foreground">CLP + IVA / mes</span>
             </div>
             <ul className="mt-6 space-y-3">
