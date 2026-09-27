@@ -1,17 +1,44 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import {
   MessageSquare, CheckCircle, ArrowRight, Bot,
-  CalendarCheck, Mail, Sparkles, ShieldCheck, Clock, Zap, TrendingUp
+  CalendarCheck, Mail, Sparkles, ShieldCheck, Zap,
 } from "lucide-react";
-
-export const metadata = {
-  title: "SmarterCRM — CRM + WhatsApp + IA",
-  description: "Automatiza ventas, atención y seguimiento con WhatsApp, CRM e Inteligencia Artificial.",
-};
+import { submitContactForm } from "./actions";
 
 export default function LandingPage() {
+  const [form, setForm] = useState({ nombre: "", empresa: "", whatsapp: "", email: "", necesidad: "" });
+  const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("sending");
+    const result = await submitContactForm(form);
+    if (result.ok) {
+      setStatus("ok");
+    } else {
+      setErrorMsg(result.error ?? "Error desconocido.");
+      setStatus("error");
+    }
+  }
   return (
     <main className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 selection:text-foreground">
+
+      {/* WhatsApp flotante */}
+      <a
+        href="https://wa.me/56979540471"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] shadow-lg shadow-black/30 hover:scale-110 transition-transform"
+        aria-label="Contáctanos por WhatsApp"
+      >
+        <svg viewBox="0 0 32 32" className="h-7 w-7 fill-white" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 2C8.268 2 2 8.268 2 16c0 2.49.648 4.826 1.777 6.857L2 30l7.352-1.754A13.93 13.93 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2Zm7.44 19.58c-.308.863-1.8 1.65-2.47 1.706-.635.054-1.232.305-4.152-.866-3.538-1.41-5.79-5.01-5.966-5.243-.175-.233-1.428-1.9-1.428-3.622s.905-2.573 1.228-2.925c.322-.352.703-.44.937-.44l.672.013c.215.009.504-.082.789.601.308.715 1.048 2.553 1.14 2.74.09.186.15.404.03.65-.12.247-.18.4-.354.617-.175.217-.368.484-.526.65-.175.183-.357.38-.154.745.204.365.905 1.49 1.943 2.415 1.334 1.19 2.459 1.558 2.824 1.733.365.175.578.146.79-.088.215-.233.905-1.055 1.148-1.42.243-.366.487-.305.82-.183.334.121 2.12 1.0 2.485 1.181.364.183.608.275.699.425.09.15.09.866-.218 1.73Z"/>
+        </svg>
+      </a>
       {/* NAV */}
       <nav className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
@@ -167,25 +194,75 @@ export default function LandingPage() {
         <div className="rounded-3xl border border-border bg-card p-8 shadow-xl shadow-black/5">
           <h2 className="text-2xl font-extrabold tracking-tight text-foreground">Solicita tu demo</h2>
           <p className="mt-2 text-sm text-muted-foreground">Completa el formulario y SmarterCRM iniciará el flujo: lead, appointment, WhatsApp, email y confirmación.</p>
-          <form className="mt-7 flex flex-col gap-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <input placeholder="Nombre" required className="h-11 rounded-lg border border-border bg-background px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20" />
-              <input placeholder="Empresa" className="h-11 rounded-lg border border-border bg-background px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
-              <input placeholder="WhatsApp (ej: +56 9 7954 0471)" className="h-11 rounded-lg border border-border bg-background px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
-              <input placeholder="Correo electrónico" type="email" required className="h-11 rounded-lg border border-border bg-background px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
-              <select className="h-11 rounded-lg border border-border bg-background px-3.5 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all">
-                <option>Necesidad principal</option>
-                <option>CRM</option>
-                <option>WhatsApp</option>
-                <option>Agenda</option>
-                <option>Automatización</option>
-              </select>
-              <button type="button" className="h-11 rounded-xl bg-primary text-sm font-bold text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
-                Agendar demostración
-              </button>
+
+          {status === "ok" ? (
+            <div className="mt-8 rounded-2xl bg-primary/5 border border-primary/20 p-6 text-center">
+              <CheckCircle className="mx-auto h-10 w-10 text-primary mb-3" />
+              <p className="font-bold text-foreground text-base">¡Solicitud recibida!</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Te enviamos un correo de confirmación. Respóndelo indicando <strong>qué día y en qué horario te podemos contactar</strong>.
+              </p>
+              <a href="https://wa.me/56979540471" target="_blank" rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#22c35e] transition-colors">
+                <svg viewBox="0 0 32 32" className="h-4 w-4 fill-white"><path d="M16 2C8.268 2 2 8.268 2 16c0 2.49.648 4.826 1.777 6.857L2 30l7.352-1.754A13.93 13.93 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2Zm7.44 19.58c-.308.863-1.8 1.65-2.47 1.706-.635.054-1.232.305-4.152-.866-3.538-1.41-5.79-5.01-5.966-5.243-.175-.233-1.428-1.9-1.428-3.622s.905-2.573 1.228-2.925c.322-.352.703-.44.937-.44l.672.013c.215.009.504-.082.789.601.308.715 1.048 2.553 1.14 2.74.09.186.15.404.03.65-.12.247-.18.4-.354.617-.175.217-.368.484-.526.65-.175.183-.357.38-.154.745.204.365.905 1.49 1.943 2.415 1.334 1.19 2.459 1.558 2.824 1.733.365.175.578.146.79-.088.215-.233.905-1.055 1.148-1.42.243-.366.487-.305.82-.183.334.121 2.12 1.0 2.485 1.181.364.183.608.275.699.425.09.15.09.866-.218 1.73Z"/></svg>
+                Escribir por WhatsApp
+              </a>
             </div>
-            <p className="text-xs text-muted-foreground text-center">Al enviar, el sistema registra el lead y activa seguimiento comercial por WhatsApp y email.</p>
-          </form>
+          ) : (
+            <form className="mt-7 flex flex-col gap-4" onSubmit={handleSubmit}>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <input
+                  placeholder="Nombre *"
+                  required
+                  value={form.nombre}
+                  onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
+                  className="h-11 rounded-lg border border-border bg-background px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                />
+                <input
+                  placeholder="Empresa"
+                  value={form.empresa}
+                  onChange={e => setForm(f => ({ ...f, empresa: e.target.value }))}
+                  className="h-11 rounded-lg border border-border bg-background px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                />
+                <input
+                  placeholder="WhatsApp (ej: +56 9 7954 0471)"
+                  value={form.whatsapp}
+                  onChange={e => setForm(f => ({ ...f, whatsapp: e.target.value }))}
+                  className="h-11 rounded-lg border border-border bg-background px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                />
+                <input
+                  placeholder="Correo electrónico *"
+                  type="email"
+                  required
+                  value={form.email}
+                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                  className="h-11 rounded-lg border border-border bg-background px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                />
+                <select
+                  value={form.necesidad}
+                  onChange={e => setForm(f => ({ ...f, necesidad: e.target.value }))}
+                  className="h-11 rounded-lg border border-border bg-background px-3.5 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                >
+                  <option value="">Necesidad principal</option>
+                  <option>CRM</option>
+                  <option>WhatsApp</option>
+                  <option>Agenda</option>
+                  <option>Automatización</option>
+                </select>
+                <button
+                  type="submit"
+                  disabled={status === "sending"}
+                  className="h-11 rounded-xl bg-primary text-sm font-bold text-primary-foreground hover:bg-primary/90 disabled:opacity-60 transition-colors"
+                >
+                  {status === "sending" ? "Enviando…" : "Agendar demostración"}
+                </button>
+              </div>
+              {status === "error" && (
+                <p className="text-xs text-red-500 text-center">{errorMsg}</p>
+              )}
+              <p className="text-xs text-muted-foreground text-center">Al enviar, el sistema registra el lead y activa seguimiento comercial por WhatsApp y email.</p>
+            </form>
+          )}
         </div>
       </section>
 
