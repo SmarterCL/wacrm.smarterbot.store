@@ -80,19 +80,55 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeId>(readInitialTheme);
   const [mode, setModeState] = useState<Mode>(readInitialMode);
 
-  const setTheme = useCallback((_next: ThemeId) => {
-    // Tema fijo: emerald. El picker en configuración no tiene efecto.
+  const setTheme = useCallback((next: ThemeId) => {
+    setThemeState(next);
+    if (typeof document !== "undefined") {
+      document.documentElement.dataset.theme = next;
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY, next);
+    } catch {
+      // localStorage puede fallar en contextos de navegación privada.
+    }
   }, []);
 
-  const setMode = useCallback((_next: Mode) => {
-    // Modo fijo: light. El toggle no tiene efecto.
+  const setMode = useCallback((next: Mode) => {
+    setModeState(next);
+    if (typeof document !== "undefined") {
+      document.documentElement.dataset.mode = next;
+    }
+    try {
+      localStorage.setItem(MODE_STORAGE_KEY, next);
+    } catch {
+      // Mismo caso que arriba.
+    }
   }, []);
 
   const toggleMode = useCallback(() => {
-    // Modo fijo: no hace nada.
-  }, []);
+    setMode(mode === "dark" ? "light" : "dark");
+  }, [mode, setMode]);
 
-  // Sincronización entre pestañas desactivada: tema y modo son fijos.
+  // Sync from other tabs — change theme or mode in tab A, tab B
+  // catches up without a refresh.
+  useEffect(() => {
+    function onStorage(e: StorageEvent) {
+      if (e.key === STORAGE_KEY) {
+        if (isThemeId(e.newValue) && e.newValue !== theme) {
+          setThemeState(e.newValue);
+          document.documentElement.dataset.theme = e.newValue;
+        }
+        return;
+      }
+      if (e.key === MODE_STORAGE_KEY) {
+        if (isMode(e.newValue) && e.newValue !== mode) {
+          setModeState(e.newValue);
+          document.documentElement.dataset.mode = e.newValue;
+        }
+      }
+    }
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [theme, mode]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, mode, setMode, toggleMode }}>

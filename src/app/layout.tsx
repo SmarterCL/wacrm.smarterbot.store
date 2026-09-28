@@ -45,14 +45,27 @@ export const viewport: Viewport = {
   colorScheme: "dark light",
 };
 
-// Boot script — fuerza siempre emerald + light, ignorando localStorage.
-// Para cambiar el tema basta editar DEFAULT_THEME / DEFAULT_MODE en
-// src/lib/themes.ts y este script se actualiza automáticamente.
+// Boot script — aplica el tema y modo guardados por el usuario antes
+// del primer paint, evitando el flash de los valores por defecto.
 const THEME_BOOT_SCRIPT = `
 (function(){
   var d = document.documentElement;
-  d.dataset.theme = ${JSON.stringify(DEFAULT_THEME)};
-  d.dataset.mode  = ${JSON.stringify(DEFAULT_MODE)};
+  try {
+    var THEME_KEY = ${JSON.stringify(STORAGE_KEY)};
+    var THEME_DEFAULT = ${JSON.stringify(DEFAULT_THEME)};
+    var THEMES = ${JSON.stringify(THEME_IDS)};
+    var savedTheme = localStorage.getItem(THEME_KEY);
+    d.dataset.theme = THEMES.indexOf(savedTheme) !== -1 ? savedTheme : THEME_DEFAULT;
+
+    var MODE_KEY = ${JSON.stringify(MODE_STORAGE_KEY)};
+    var MODE_DEFAULT = ${JSON.stringify(DEFAULT_MODE)};
+    var MODES = ${JSON.stringify(MODES)};
+    var savedMode = localStorage.getItem(MODE_KEY);
+    d.dataset.mode = MODES.indexOf(savedMode) !== -1 ? savedMode : MODE_DEFAULT;
+  } catch (_e) {
+    d.dataset.theme = ${JSON.stringify(DEFAULT_THEME)};
+    d.dataset.mode  = ${JSON.stringify(DEFAULT_MODE)};
+  }
 })();
 `;
 
