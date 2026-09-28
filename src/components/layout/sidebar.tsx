@@ -394,6 +394,31 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Legal links — always visible at the very bottom */}
+          <div className="mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1 px-3">
+            <Link
+              href="/privacidad"
+              target="_blank"
+              className="text-[10px] text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+            >
+              Privacidad
+            </Link>
+            <Link
+              href="/condiciones"
+              target="_blank"
+              className="text-[10px] text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+            >
+              Condiciones
+            </Link>
+            <Link
+              href="/eliminacion"
+              target="_blank"
+              className="text-[10px] text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+            >
+              Eliminación de datos
+            </Link>
+          </div>
         </div>
       </aside>
     </>
