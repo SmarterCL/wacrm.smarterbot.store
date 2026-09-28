@@ -45,35 +45,14 @@ export const viewport: Viewport = {
   colorScheme: "dark light",
 };
 
-// Inline boot script — runs before React hydrates so the user's
-// chosen accent (data-theme) AND mode (data-mode) are on the <html>
-// element before first paint. Without this every page load flashes
-// the server-rendered defaults for a frame before the React tree
-// mounts and applies the picked values.
-//
-// Kept dependency-free (no imports, no JSX) — must be a string the
-// browser can run as a single <script>. Knowledge of valid ids is
-// sourced from the THEME_IDS / MODES constants so adding one doesn't
-// silently break the boot path.
+// Boot script — fuerza siempre emerald + light, ignorando localStorage.
+// Para cambiar el tema basta editar DEFAULT_THEME / DEFAULT_MODE en
+// src/lib/themes.ts y este script se actualiza automáticamente.
 const THEME_BOOT_SCRIPT = `
 (function(){
   var d = document.documentElement;
-  try {
-    var THEME_KEY = ${JSON.stringify(STORAGE_KEY)};
-    var THEME_DEFAULT = ${JSON.stringify(DEFAULT_THEME)};
-    var THEMES = ${JSON.stringify(THEME_IDS)};
-    var savedTheme = localStorage.getItem(THEME_KEY);
-    d.dataset.theme = THEMES.indexOf(savedTheme) !== -1 ? savedTheme : THEME_DEFAULT;
-
-    var MODE_KEY = ${JSON.stringify(MODE_STORAGE_KEY)};
-    var MODE_DEFAULT = ${JSON.stringify(DEFAULT_MODE)};
-    var MODES = ${JSON.stringify(MODES)};
-    var savedMode = localStorage.getItem(MODE_KEY);
-    d.dataset.mode = MODES.indexOf(savedMode) !== -1 ? savedMode : MODE_DEFAULT;
-  } catch (_e) {
-    d.dataset.theme = ${JSON.stringify(DEFAULT_THEME)};
-    d.dataset.mode = ${JSON.stringify(DEFAULT_MODE)};
-  }
+  d.dataset.theme = ${JSON.stringify(DEFAULT_THEME)};
+  d.dataset.mode  = ${JSON.stringify(DEFAULT_MODE)};
 })();
 `;
 
