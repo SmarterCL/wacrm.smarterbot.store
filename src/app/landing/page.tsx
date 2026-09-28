@@ -268,16 +268,21 @@ export default function LandingPage() {
 
       {/* FOOTER */}
       <footer className="border-t border-border bg-card/50 py-10">
-        <div className="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mx-auto max-w-6xl px-6 flex flex-col items-center gap-6 md:flex-row md:justify-between">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm shadow-primary/20">
               <Bot className="h-4 w-4" />
             </div>
             <span className="text-sm font-bold">SmarterCRM</span>
           </div>
-          <p className="text-xs text-muted-foreground">CRM + WhatsApp + Agenda + IA · Implementación guiada</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            <Link href="/privacidad" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Política de Privacidad</Link>
+            <Link href="/condiciones" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Términos y Condiciones</Link>
+            <Link href="/eliminacion" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Eliminación de datos</Link>
+          </div>
           <Link href="/login" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">Ingresar al CRM</Link>
         </div>
+        <p className="mt-6 text-center text-xs text-muted-foreground">Smarter SpA · RUT 78.233.471-4 · Chile</p>
       </footer>
     </main>
   );
